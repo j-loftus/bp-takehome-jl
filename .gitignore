@@ -1,0 +1,47 @@
+# Contracts corpus — large, not tracked
+contracts/
+
+# Generated pipeline artifacts — ignore everything in data/ except the two
+# files the deployed app needs and that Task 2.7 commits on purpose:
+# data/contracts.db (Task 2.5 structured DB) and data/parse_cache.json
+# (Task 2.7 §8.1 — lets the vector store rebuild at startup without shipping PDFs).
+data/*
+!data/contracts.db
+!data/parse_cache.json
+
+# Eval outputs
+eval/results/
+
+# Environment
+.env
+*.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+
+# manual ignores
+contracts.zip
+outputs/*
+notebooks/*
+BP VP External Take-Home_vShare.pdf
+.claude/settings.json
