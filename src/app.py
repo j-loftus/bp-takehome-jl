@@ -15,6 +15,9 @@ Run:
 import json
 import os
 import sys
+import threading
+import time
+from collections import deque
 from pathlib import Path
 
 import streamlit as st
@@ -65,6 +68,41 @@ from analyses import (
 from build_vector_store import build_index
 from chat_router import CHROMA_PATH, answer_semantic, answer_structured, classify_intent
 from viz import CHART_TYPES, humanize_columns, render
+
+# ---------------------------------------------------------------------------
+# Chat rate limiting — process-global, not per-session, so it can't be bypassed
+# by opening a new browser tab/incognito window. Protects API spend on a public
+# deployment; resets on every app restart/redeploy. Only the chat surface calls
+# the LLM, so only chat submissions are gated — the dashboard is pure SQL/pandas.
+# Deliberately not in chat_router.py so CLI testing (--query) stays unrestricted.
+# ---------------------------------------------------------------------------
+
+_RATE_LIMIT_MAX_REQUESTS = 10
+_RATE_LIMIT_WINDOW_SECONDS = 3600
+_rate_limit_lock = threading.Lock()
+_rate_limit_timestamps: deque = deque()
+
+
+def _check_rate_limit() -> tuple[bool, int]:
+    """
+    Returns (allowed, seconds_until_next_slot_frees_up).
+
+    Thread-safe sliding-window counter shared across all sessions hitting this
+    process. If allowed, the call is recorded immediately (callers should only
+    call this once per submission, right before doing the actual LLM work).
+    """
+    now = time.time()
+    with _rate_limit_lock:
+        while _rate_limit_timestamps and now - _rate_limit_timestamps[0] > _RATE_LIMIT_WINDOW_SECONDS:
+            _rate_limit_timestamps.popleft()
+
+        if len(_rate_limit_timestamps) < _RATE_LIMIT_MAX_REQUESTS:
+            _rate_limit_timestamps.append(now)
+            return True, 0
+
+        retry_after = int(_RATE_LIMIT_WINDOW_SECONDS - (now - _rate_limit_timestamps[0]))
+        return False, max(retry_after, 1)
+
 
 # ---------------------------------------------------------------------------
 # STEP 2: Build vector index once per container (cold start only).
@@ -364,6 +402,21 @@ else:
         with st.chat_message("user"):
             st.markdown(user_input)
         st.session_state.messages.append({"role": "user", "content": user_input, "result": None})
+
+        allowed, retry_after = _check_rate_limit()
+        if not allowed:
+            minutes = max(retry_after // 60, 1)
+            with st.chat_message("assistant"):
+                st.warning(
+                    f"This demo allows {_RATE_LIMIT_MAX_REQUESTS} questions per hour to keep API costs "
+                    f"in check. Please try again in about {minutes} minute(s)."
+                )
+            st.session_state.messages.append({
+                "role": "assistant",
+                "content": "Rate limit reached for this hour — please try again shortly.",
+                "result": None,
+            })
+            st.stop()
 
         # Route and answer
         with st.chat_message("assistant"):
