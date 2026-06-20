@@ -143,48 +143,79 @@ _CONTRACT_NUMBER_PATTERN = re.compile(r"\b\d{5}(?:-\d+)?\b")
 def _resolve_entity_filter(query: str) -> dict | None:
     """
     If the query names a specific contract_number or vendor_name that exists in the DB,
-    build a Chroma `where` filter scoping retrieval to that vendor's full document family
-    (all contract_number variants for that vendor — document families can carry inconsistent
-    contract_number values across exhibits/amendments, but share the same vendor_name).
+    build a Chroma `where` filter scoping retrieval to that document family's full closure
+    of vendor_name and contract_number values.
+
+    A closure, not a single value, because a document family can carry inconsistent values
+    on both axes across its lifecycle: the same contract_number can appear under multiple
+    vendor_name strings (e.g. a vendor rebrand — "Global Tel*Link Corporation" renamed to
+    "ViaPath Technologies" partway through contract 21019's life), and the same vendor_name
+    can span multiple contract_number variants (e.g. an exhibit with its own internal
+    reference number distinct from the parent contract_number). Resolving to only one
+    matched value and filtering on it alone silently excludes the other half of the family —
+    which is worse than no filter, since it actively excludes the right document rather than
+    just failing to prioritize it.
 
     Returns None if nothing resolves, so callers can fall back to unfiltered retrieval.
     """
     try:
         con = sqlite3.connect(f"file:{DB_PATH}?mode=ro", uri=True)
         try:
-            vendor_name = None
+            contract_numbers: set[str] = set()
+            vendor_names: set[str] = set()
 
             for candidate in _CONTRACT_NUMBER_PATTERN.findall(query):
-                row = con.execute(
-                    "SELECT vendor_name FROM contracts WHERE contract_number = ? LIMIT 1", (candidate,)
-                ).fetchone()
-                if row:
-                    vendor_name = row[0]
-                    break
+                rows = con.execute(
+                    "SELECT DISTINCT vendor_name FROM contracts WHERE contract_number = ?", (candidate,)
+                ).fetchall()
+                if rows:
+                    contract_numbers.add(candidate)
+                    vendor_names.update(r[0] for r in rows)
 
-            if not vendor_name:
+            if not vendor_names:
                 all_vendors = [r[0] for r in con.execute("SELECT DISTINCT vendor_name FROM contracts").fetchall()]
                 query_lower = query.lower()
                 matches = [v for v in all_vendors if v and v.lower() in query_lower]
                 if matches:
-                    vendor_name = max(matches, key=len)  # prefer the most specific (longest) match
+                    vendor_names.add(max(matches, key=len))  # prefer the most specific (longest) match
 
-            if not vendor_name:
+            if not vendor_names:
                 return None
 
-            contract_numbers = [
-                r[0] for r in con.execute(
-                    "SELECT DISTINCT contract_number FROM contracts WHERE vendor_name = ?", (vendor_name,)
-                ).fetchall()
-            ]
+            # Expand the closure both ways for two passes — enough to catch a rebrand
+            # (vendor -> contract -> other vendor name) or a split reference number
+            # (contract -> vendor -> other contract number) without unbounded recursion.
+            for _ in range(2):
+                if vendor_names:
+                    placeholders = ",".join("?" * len(vendor_names))
+                    rows = con.execute(
+                        f"SELECT DISTINCT contract_number FROM contracts WHERE vendor_name IN ({placeholders})",
+                        list(vendor_names),
+                    ).fetchall()
+                    contract_numbers.update(r[0] for r in rows)
+                if contract_numbers:
+                    placeholders = ",".join("?" * len(contract_numbers))
+                    rows = con.execute(
+                        f"SELECT DISTINCT vendor_name FROM contracts WHERE contract_number IN ({placeholders})",
+                        list(contract_numbers),
+                    ).fetchall()
+                    vendor_names.update(r[0] for r in rows)
         finally:
             con.close()
     except Exception:
         return None
 
-    if len(contract_numbers) > 1:
-        return {"$or": [{"vendor_name": vendor_name}, {"contract_number": {"$in": contract_numbers}}]}
-    return {"vendor_name": vendor_name}
+    clauses = []
+    if vendor_names:
+        clauses.append({"vendor_name": {"$in": sorted(vendor_names)}})
+    if contract_numbers:
+        clauses.append({"contract_number": {"$in": sorted(contract_numbers)}})
+
+    if not clauses:
+        return None
+    if len(clauses) == 1:
+        return clauses[0]
+    return {"$or": clauses}
 
 
 def _exec_sql(sql: str) -> tuple[pd.DataFrame, str | None]:
