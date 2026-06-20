@@ -34,9 +34,9 @@
 | 2.4 | Prompt iteration loop (manual, pre-DB) | ✅ Done | Run extraction on 5-10 docs manually; catch early failure modes; refine prompt before scaling |
 | 2.5 | SQLite database setup | ✅ Done | Stand up DB only after prompt quality is acceptable; one table minimum; schema from Phase 1 |
 | 2.6 | Vector store / RAG layer | ✅ Done | ChromaDB (local, no infra); chunk docs with overlap; handles semantic queries the structured table can't |
-| 2.7 | Chat interface + deployment | 🔲 Not started | Streamlit UI; NL query → structured table OR RAG depending on query type; **must visualize/render data cuts back to user (chart or rendered table), not just text — "perform and visualize basic data cuts" is an explicit spec requirement**; deployment plan: SQLite committed to repo + ChromaDB rebuilt at startup (avoids hosting a separate vector DB); deploy to Streamlit Community Cloud with local fallback; production note: would persist vector store separately; **MS Teams integration deliberately deprioritized vs. core (strong plus, not required) — document the decision + how I'd approach it** |
-| 2.8 | Error handling and graceful failure modes | 🔲 Not started | Malformed doc, no relevant context, extraction failure, classification failure |
-| 2.9 | README | 🔲 Not started | Architecture, decisions, known limitations, top 2-3 next improvements |
+| 2.7 | Chat interface + deployment | ✅ Done | Streamlit UI; NL query → structured table OR RAG depending on query type; **must visualize/render data cuts back to user (chart or rendered table), not just text — "perform and visualize basic data cuts" is an explicit spec requirement**; deployment plan: SQLite committed to repo + ChromaDB rebuilt at startup (avoids hosting a separate vector DB); deploy to Streamlit Community Cloud with local fallback; production note: would persist vector store separately; **MS Teams integration deliberately deprioritized vs. core (strong plus, not required) — document the decision + how I'd approach it** |
+| 2.8 | Error handling and graceful failure modes | ✅ Done | Malformed doc, no relevant context, extraction failure, classification failure |
+| 2.9 | README | ✅ Done | Architecture, decisions, known limitations, top 2-3 next improvements |
 
 ---
 
