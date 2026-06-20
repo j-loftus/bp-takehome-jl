@@ -351,10 +351,11 @@ if surface == "Structured Insights":
 
 else:
     st.header("Ask a Question")
-    st.text(
-        "Ask anything about the contract portfolio in plain English — quick numbers "
-        "(\"Top 10 vendors by spend\"), filters (\"Which contracts expire in the next 90 days?\"), "
-        "or specific contract language (\"What are the payment terms for contract 21019?\"). "
+    st.markdown(
+        "Ask anything about the contract portfolio in plain English, for example:\n"
+        "- **Aggregates** — \"Top 10 vendors by spend\"\n"
+        "- **Filters** — \"Which contracts expire in the next 90 days?\"\n"
+        "- **Contract language** — \"What are the payment terms for contract 21019?\"\n\n"
         "**Each question is answered on its own**, with no memory of earlier questions in this "
         "session — so include everything the question needs (vendor name, contract number, time "
         "window, etc.) right in your question rather than referring back to a prior answer."
