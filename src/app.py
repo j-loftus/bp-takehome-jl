@@ -366,19 +366,27 @@ else:
             "Document questions will not work. SQL questions still will."
         )
 
-    # Example query chips
+    # Example query chips — 3 across the top row, 2 centered below
     st.markdown("**Example questions to try:**")
-    example_cols = st.columns(4)
     examples = [
         "Top 10 vendors by total contract value",
         "Which contracts expire in the next 180 days?",
-        "What are the billing rates for contract 21019?",
         "Which contracts have renewal options?",
+        "What are the billing rates for contract 21019?",
+        "What services does Journal Technologies provide under contract 24313?",
     ]
-    for col, example in zip(example_cols, examples):
+
+    def _example_button(col, example: str) -> None:
         with col:
             if st.button(example, use_container_width=True):
                 st.session_state.setdefault("pending_query", example)
+
+    for col, example in zip(st.columns(3), examples[:3]):
+        _example_button(col, example)
+
+    _, col_a, col_b, _ = st.columns([1, 3, 3, 1])
+    for col, example in zip([col_a, col_b], examples[3:]):
+        _example_button(col, example)
 
     st.divider()
 
