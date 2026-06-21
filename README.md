@@ -83,8 +83,26 @@ under `data/` is excluded) since the corpus PDFs themselves are not shipped.
 
 ```bash
 pytest tests/
-python -m src.eval.ground_truth
+
+# Generate blank ground-truth skeletons + source-text dumps for labeling
+# (no values pre-filled from pipeline output — see docs/evaluation.md §3.4-3.5)
+python -m eval.make_labeling_templates --extraction-docs "<file>.pdf:<doc_type>" ...
+python -m eval.make_labeling_templates --classification-sample 25 --stratify
+
+# Fill eval/ground_truth_extraction.json, eval/ground_truth_classification.json,
+# and eval/chat_cases.json by hand, then run the full eval:
+python -m eval.run_eval                       # judge sample defaults to the labeled docs
+python -m eval.run_eval --judge-sample 8
+python -m eval.run_eval --judge-extra-unlabeled 3
+
+# Judge layer standalone (e.g. to sanity-check before a full run):
+python -m eval.judge --sample 8
 ```
+
+Writes `outputs/eval_report.md` (the shareable scorecard + "proven vs. assumed" section),
+`outputs/eval_results.json`, `outputs/eval_judge_raw.json`, and `outputs/eval_token_summary.txt`.
+`eval/monitoring.py` exposes `monitoring_snapshot()` + `compare_to_baseline()`, reusing the same
+scoring/judge code on a live batch — see docs/evaluation.md §8.
 
 ## Key Decisions
 

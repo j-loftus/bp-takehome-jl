@@ -114,15 +114,19 @@ def call_llm(
     prompt: str,
     task: str = "extraction",
     max_tokens: int = 1500,
+    temperature: float | None = None,
 ) -> str:
     """
     Send a prompt to the Anthropic API and return the raw text response.
 
     Args:
-        prompt:     The full prompt string to send as the user message.
-        task:       Task name used to resolve the model from MODEL_CONFIG.
-                    One of: 'classification', 'extraction', 'judge'.
-        max_tokens: Maximum tokens in the response.
+        prompt:      The full prompt string to send as the user message.
+        task:        Task name used to resolve the model from MODEL_CONFIG.
+                     One of: 'classification', 'extraction', 'judge'.
+        max_tokens:  Maximum tokens in the response.
+        temperature: Sampling temperature passed through to the API. Omitted
+                     (default behavior) when None; the eval judge passes 0
+                     for reproducible scores.
 
     Returns:
         Raw response text (str). Caller is responsible for JSON parsing.
@@ -132,6 +136,7 @@ def call_llm(
     """
     model = MODEL_CONFIG.get(task, MODEL_CONFIG["extraction"])
     last_error: Exception | None = None
+    kwargs = {} if temperature is None else {"temperature": temperature}
 
     for attempt in range(MAX_RETRIES):
         try:
@@ -139,6 +144,7 @@ def call_llm(
                 model=model,
                 max_tokens=max_tokens,
                 messages=[{"role": "user", "content": prompt}],
+                **kwargs,
             )
             _log_token_usage(response, task)
             text = response.content[0].text
@@ -174,6 +180,7 @@ def call_llm_with_images(
     page_images: list[bytes],
     task: str = "extraction",
     max_tokens: int = 4096,
+    temperature: float | None = None,
 ) -> str:
     """
     Send a prompt plus page images to the Anthropic API for vision-based extraction.
@@ -186,6 +193,9 @@ def call_llm_with_images(
         task:         Task name for model resolution. Use "extraction".
         max_tokens:   Default 4096 — higher than text path because vision calls may
                       produce more verbose extraction_notes across 20 pages of images.
+        temperature:  Sampling temperature passed through to the API. Omitted
+                      (default behavior) when None; the eval judge passes 0
+                      for reproducible scores on scanned documents.
 
     Returns:
         Raw response text (str). Caller is responsible for JSON parsing.
@@ -208,6 +218,7 @@ def call_llm_with_images(
     content.append({"type": "text", "text": prompt})
 
     last_error: Exception | None = None
+    kwargs = {} if temperature is None else {"temperature": temperature}
 
     for attempt in range(MAX_RETRIES):
         try:
@@ -215,6 +226,7 @@ def call_llm_with_images(
                 model=model,
                 max_tokens=max_tokens,
                 messages=[{"role": "user", "content": content}],
+                **kwargs,
             )
             _log_token_usage(response, task)
             text = response.content[0].text

@@ -9,8 +9,8 @@ data/*
 !data/contracts.db
 !data/parse_cache.json
 
-# Eval outputs
-eval/results/
+# Eval — generated source-text dumps for labeling (operator aid, not a deliverable)
+eval/labeling/
 
 # Environment
 .env

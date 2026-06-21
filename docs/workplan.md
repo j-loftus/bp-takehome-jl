@@ -43,12 +43,12 @@
 ## Phase 3: Evaluation (Task 2)
 | # | Task | Status | Notes |
 |---|------|--------|-------|
-| 3.1 | Design eval framework | 🔲 Not started | Two-layer approach: (1) ground truth test set for precision anchoring; (2) LLM-as-judge for scalable coverage across full sample |
-| 3.2 | Define metrics | 🔲 Not started | Extraction: field-level accuracy, null rate by doc type; Chat: retrieval precision, answer faithfulness, relevance; judge scores dimensions: faithfulness, completeness, relevance |
-| 3.3 | Build LLM-as-judge | 🔲 Not started | Judge prompt takes (question, context, extracted answer) → scores + reasoning; run across full 100-doc extraction and broader query set; surfaces edge cases ground truth set won't catch |
-| 3.4 | Build ground-truth test set (5-10 cases) | 🔲 Not started | Manually verified against source docs; anchors the eval; catches gross failures |
-| 3.5 | Run eval and record results | 🔲 Not started | Share alongside eval code; report both ground truth accuracy and judge scores |
-| 3.6 | Production monitoring approach | 🔲 Not started | Judge prompt as foundation for ongoing monitoring; run on sample of live outputs periodically; alert on score drift; also covers prompt drift and doc format changes |
+| 3.1 | Design eval framework | ✅ Done | Two-layer: ground truth anchor + LLM-as-judge scale layer, bridged by a judge-vs-ground-truth calibration number; spec in `docs/evaluation.md` |
+| 3.2 | Define metrics | ✅ Done | `eval/scoring.py` — six-bucket field scoring, field accuracy + hallucination rate (headline), classification accuracy + confusion matrix, inferred-field accuracy reported separately |
+| 3.3 | Build LLM-as-judge | ✅ Done | `eval/judge.py` — extraction faithfulness (text + vision path for scanned docs) and chat faithfulness/relevance judges, `temperature=0`, batch-capable with `--sample N` |
+| 3.4 | Build ground-truth test set | ✅ Done | `eval/ground_truth_extraction.json` (6 docs), `eval/ground_truth_classification.json` (24 docs), `eval/chat_cases.json` (8 cases) — fully labeled and validated against `eval/scoring.py`'s type rules |
+| 3.5 | Run eval and record results | ✅ Done | `python -m eval.run_eval` — classification 58.3% (n=24), extraction field accuracy 93.3% / hallucination 6.1%, judge-ground-truth agreement 89.1% (n=55); results in `outputs/eval_report.md`. Judge surfaced two real findings beyond ground truth: a document-level contract-number inconsistency on `2023_10_05_Contract_22143_Modification_1_EXECUTED.pdf` and a defensible `service_category` disagreement on the same doc |
+| 3.6 | Production monitoring approach | ✅ Done | `eval/monitoring.py` — `monitoring_snapshot()` + `compare_to_baseline()` reusing `scoring.py`/`judge.py`; logged drift alerts, no scheduler/storage (PoC scope) |
 
 ---
 

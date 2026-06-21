@@ -419,6 +419,7 @@ def answer_semantic(query: str, n_results: int = 5) -> dict:
           "sources": list[dict],     # [{source_filename, contract_number, vendor_name}, ...]
           "low_confidence": bool,
           "error": str | None,
+          "retrieved_chunks": list[dict],  # raw query_index() results fed to synthesis/judge
         }
     """
     entity_scoped = False
@@ -438,6 +439,7 @@ def answer_semantic(query: str, n_results: int = 5) -> dict:
             "sources": [],
             "low_confidence": False,
             "error": str(e),
+            "retrieved_chunks": [],
         }
 
     if not chunks:
@@ -446,6 +448,7 @@ def answer_semantic(query: str, n_results: int = 5) -> dict:
             "sources": [],
             "low_confidence": False,
             "error": None,
+            "retrieved_chunks": [],
         }
 
     # Low-confidence gate: check minimum distance. Use a looser cutoff when retrieval
@@ -462,6 +465,7 @@ def answer_semantic(query: str, n_results: int = 5) -> dict:
             "sources": _extract_sources(chunks[:1]),
             "low_confidence": True,
             "error": None,
+            "retrieved_chunks": chunks,
         }
 
     # Build synthesis prompt
@@ -495,6 +499,7 @@ Instructions:
             "sources": _extract_sources(chunks),
             "low_confidence": False,
             "error": str(e),
+            "retrieved_chunks": chunks,
         }
 
     return {
@@ -502,6 +507,7 @@ Instructions:
         "sources": _extract_sources(chunks),
         "low_confidence": False,
         "error": None,
+        "retrieved_chunks": chunks,
     }
 
 

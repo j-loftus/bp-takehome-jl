@@ -1,0 +1,82 @@
+[
+  {
+    "id": "chat_01",
+    "question": "How many fully executed agreements are in the dataset?",
+    "expected_intent": "structured",
+    "eval_mode": "deterministic",
+    "expected_answer": "20",
+    "target_filename": null,
+    "target_contract_number": null,
+    "notes": "COUNT WHERE doc_type='fully_executed_agreement', verified directly against contracts.db on 2026-06-20."
+  },
+  {
+    "id": "chat_02",
+    "question": "How many modification or amendment documents are there?",
+    "expected_intent": "structured",
+    "eval_mode": "deterministic",
+    "expected_answer": "12",
+    "target_filename": null,
+    "target_contract_number": null,
+    "notes": "COUNT WHERE doc_type='modification_amendment', verified directly against contracts.db on 2026-06-20."
+  },
+  {
+    "id": "chat_03",
+    "question": "What is the total contract value for contract number 19028?",
+    "expected_intent": "structured",
+    "eval_mode": "deterministic",
+    "expected_answer": "$2,645,271.00",
+    "target_filename": "19028_Fully_Executed_Agreement.pdf",
+    "target_contract_number": "19028",
+    "notes": "Only one of the four rows for contract 19028 (the fully_executed_agreement) has a populated total_contract_value; the three modification_amendment rows for the same contract are null. Verified directly against contracts.db on 2026-06-20."
+  },
+  {
+    "id": "chat_04",
+    "question": "What are the termination notice terms for contract 19028?",
+    "expected_intent": "semantic",
+    "eval_mode": "judge",
+    "expected_answer": null,
+    "target_filename": "19028_Fully_Executed_Agreement.pdf",
+    "target_contract_number": "19028",
+    "notes": "Known answer: 30 days written notice for convenience. Verbatim clause: 'Except as otherwise set forth in a Statement of Work, either party may terminate the agreement for convenience upon on thirty (30) days prior written notice.' Confirmed via vision transcription of the scanned doc on 2026-06-20."
+  },
+  {
+    "id": "chat_05",
+    "question": "What is the renewal structure described in the renewal letter for contract 16069?",
+    "expected_intent": "semantic",
+    "eval_mode": "judge",
+    "expected_answer": null,
+    "target_filename": "16069_Renewal_Letter_20_21.pdf",
+    "target_contract_number": "16069",
+    "notes": "Known answer: this letter extends the contract for one additional year, July 12, 2020 through July 11, 2021, under the existing terms and conditions ('the County has extended this contract for the following one (1) year period of July 12, 2020 through July 11, 2021. All the terms and conditions of the contract shall apply.'). Also requires an updated Certificate of Insurance and Vendor Disclosure Statement at renewal. Confirmed from eval/labeling/16069_Renewal_Letter_20_21.pdf.txt on 2026-06-20."
+  },
+  {
+    "id": "chat_06",
+    "question": "What does the vendor disclosure statement for contract 18018 cover?",
+    "expected_intent": "semantic",
+    "eval_mode": "judge",
+    "expected_answer": null,
+    "target_filename": "18018_Vendor_Disclosure_Form__signed.pdf",
+    "target_contract_number": "18018",
+    "notes": "Known answer: the vendor (Imagesoft, Inc.) discloses any familial relationships between its owners/principals/officers and Lake County elected officials, department directors, deputy directors, or managers, plus any political campaign contributions made by the vendor (or its principals/officers/agents) to Lake County board members or countywide elected officials within the last five years. This form reports none on both counts. References 'Renewal Contract # 18018'. Confirmed from eval/labeling/18018_Vendor_Disclosure_Form__signed.pdf.txt on 2026-06-20."
+  },
+  {
+    "id": "chat_07",
+    "question": "What was modified in the amendment to contract 22143?",
+    "expected_intent": "semantic",
+    "eval_mode": "judge",
+    "expected_answer": null,
+    "target_filename": "2023_10_05_Contract_22143_Modification_1_EXECUTED.pdf",
+    "target_contract_number": "22143",
+    "notes": "Known answer: this is Modification No. 1 to Agreement 22143 (Appin Associates, Building Automation System Services for the Lake County ROC Facility). It increases the agreement price by $47,082.20 (from $170,168.80 to a not-to-exceed total of $217,251.00) to cover additional services outlined in Exhibit A; the original agreement was executed October 11, 2022. Confirmed from eval/labeling/2023_10_05_Contract_22143_Modification_1_EXECUTED.pdf.txt on 2026-06-20."
+  },
+  {
+    "id": "chat_08",
+    "question": "What are the terms of the contract awarded to Core & Main under contract 23036?",
+    "expected_intent": "semantic",
+    "eval_mode": "judge",
+    "expected_answer": null,
+    "target_filename": "23036_Award_Letter.pdf",
+    "target_contract_number": "23036",
+    "notes": "Known answer: award of Bid #23036 to Core & Main for purchase of fire hydrant assemblies and repair parts for Lake County Dept. of Public Works, estimated amount $652,151.96, term April 1, 2023 through March 31, 2024 with the option to renew for four (4) additional one-year periods (Lake County's discretion, not automatic). Award contingent on County Board approval and proof of insurance. Confirmed from eval/labeling/23036_Award_Letter.pdf.txt on 2026-06-20."
+  }
+]

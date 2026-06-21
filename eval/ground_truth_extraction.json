@@ -1,0 +1,140 @@
+[
+  {
+    "source_filename": "19028_Fully_Executed_Agreement.pdf",
+    "gold_doc_type": "fully_executed_agreement",
+    "fields": {
+      "contract_number": "19028",
+      "vendor_name": "HOV SERVICES INC.",
+      "doc_date": "2020-07-16",
+      "county_department": "Clerk of the Circuit Court of the Nineteenth Judicial Circuit",
+      "total_contract_value": 2645271.00,
+      "price_escalator_terms": "not_specified",
+      "modification_financial_delta": null,
+      "contract_start_date": "2020-07-16",
+      "contract_end_date": "2023-07-16",
+      "renewal_options": "3 x 1-year renewal options",
+      "auto_renewal_flag": 0,
+      "termination_notice_days": 30,
+      "service_category": "professional_services",
+      "procurement_vehicle": "direct_rfp",
+      "insurance_requirements_flag": 1,
+      "parent_contract_number": null
+    },
+    "notes": ""
+  },
+  {
+    "source_filename": "16069_Agreement_fully_executed.pdf",
+    "gold_doc_type": "fully_executed_agreement",
+    "fields": {
+      "contract_number": "16069",
+      "vendor_name": "Conference Technologies Inc.",
+      "doc_date": "2016-07-19",
+      "county_department": null,
+      "total_contract_value": 98075.95,
+      "price_escalator_terms": "fixed",
+      "modification_financial_delta": null,
+      "contract_start_date": "2016-07-19",
+      "contract_end_date": null,
+      "renewal_options": "3 x 1-year renewal options",
+      "auto_renewal_flag": 0,
+      "termination_notice_days": 30,
+      "service_category": "technology_software",
+      "procurement_vehicle": "direct_rfp",
+      "insurance_requirements_flag": 1,
+      "parent_contract_number": null
+    },
+    "notes": ""
+  },
+  {
+    "source_filename": "2023_10_05_Contract_22143_Modification_1_EXECUTED.pdf",
+    "gold_doc_type": "modification_amendment",
+    "fields": {
+      "contract_number": "22143",
+      "vendor_name": "Appin Associates",
+      "doc_date": "2023-10-05",
+      "county_department": "Lake County Regional Operations & Communications (ROC) Facility",
+      "total_contract_value": null,
+      "price_escalator_terms": null,
+      "modification_financial_delta": 47082.20,
+      "contract_start_date": null,
+      "contract_end_date": null,
+      "renewal_options": null,
+      "auto_renewal_flag": null,
+      "termination_notice_days": null,
+      "service_category": "facilities_maintenance",
+      "procurement_vehicle": null,
+      "insurance_requirements_flag": null,
+      "parent_contract_number": "22143"
+    },
+    "notes": ""
+  },
+  {
+    "source_filename": "23036_Award_Letter.pdf",
+    "gold_doc_type": "award_letter",
+    "fields": {
+      "contract_number": "23036",
+      "vendor_name": "Core & Main",
+      "doc_date": "2023-03-27",
+      "county_department": "LAKE COUNTY DEPARTMENT OF PUBLIC WORKS",
+      "total_contract_value": 652151.96,
+      "price_escalator_terms": null,
+      "modification_financial_delta": null,
+      "contract_start_date": "2023-04-01",
+      "contract_end_date": "2024-03-31",
+      "renewal_options": "4 x 1-year renewal options",
+      "auto_renewal_flag": null,
+      "termination_notice_days": null,
+      "service_category": "supplies_goods",
+      "procurement_vehicle": "direct_rfp",
+      "insurance_requirements_flag": null,
+      "parent_contract_number": null
+    },
+    "notes": ""
+  },
+  {
+    "source_filename": "16069_Renewal_Letter_20_21.pdf",
+    "gold_doc_type": "renewal_letter",
+    "fields": {
+      "contract_number": "16069",
+      "vendor_name": "Conference Technologies, Inc.",
+      "doc_date": "2020-04-27",
+      "county_department": null,
+      "total_contract_value": null,
+      "price_escalator_terms": null,
+      "modification_financial_delta": null,
+      "contract_start_date": "2020-07-12",
+      "contract_end_date": "2021-07-11",
+      "renewal_options": null,
+      "auto_renewal_flag": null,
+      "termination_notice_days": null,
+      "service_category": "technology_software",
+      "procurement_vehicle": null,
+      "insurance_requirements_flag": null,
+      "parent_contract_number": "16069"
+    },
+    "notes": ""
+  },
+  {
+    "source_filename": "18018_Vendor_Disclosure_Form__signed.pdf",
+    "gold_doc_type": "vendor_disclosure_statement",
+    "fields": {
+      "contract_number": "18018",
+      "vendor_name": "Imagesoft, Inc.",
+      "doc_date": "2019-12-31",
+      "county_department": null,
+      "total_contract_value": null,
+      "price_escalator_terms": null,
+      "modification_financial_delta": null,
+      "contract_start_date": null,
+      "contract_end_date": null,
+      "renewal_options": null,
+      "auto_renewal_flag": null,
+      "termination_notice_days": null,
+      "service_category": null,
+      "procurement_vehicle": null,
+      "insurance_requirements_flag": null,
+      "parent_contract_number": "18018"
+    },
+    "notes": ""
+  }
+]

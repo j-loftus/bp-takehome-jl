@@ -239,7 +239,14 @@ def analysis_7(db_path: str = DB_PATH) -> pd.DataFrame:
 
 
 def analysis_8(db_path: str = DB_PATH) -> pd.DataFrame:
-    """Incumbent dependency — vendors with 3+ renewals; rank by renewal count and current value."""
+    """Incumbent dependency — vendors with 3+ renewals; rank by renewal count and current value.
+
+    The "current value" source document falls back to award_letter when no
+    fully_executed_agreement row exists for a contract_number — some contract families'
+    originating document is classified as award_letter rather than FEA, and excluding
+    those contracts entirely (rather than deprioritizing them behind a real FEA row when
+    one exists) would silently drop real incumbents with active renewal histories.
+    """
     sql = """
         WITH renewal_counts AS (
             SELECT contract_number, COUNT(*) AS renewal_count
@@ -247,12 +254,21 @@ def analysis_8(db_path: str = DB_PATH) -> pd.DataFrame:
             WHERE doc_type = 'renewal_letter'
             GROUP BY contract_number
         ),
+        candidate_originals AS (
+            SELECT contract_number, vendor_name, total_contract_value,
+                   contract_start_date, contract_end_date, doc_date,
+                   CASE doc_type WHEN 'fully_executed_agreement' THEN 0 ELSE 1 END AS doc_type_priority
+            FROM contracts
+            WHERE doc_type IN ('fully_executed_agreement', 'award_letter')
+        ),
         latest_values AS (
             SELECT contract_number, vendor_name, total_contract_value,
                    contract_start_date, contract_end_date,
-                   ROW_NUMBER() OVER (PARTITION BY contract_number ORDER BY doc_date DESC NULLS LAST) AS rn
-            FROM contracts
-            WHERE doc_type = 'fully_executed_agreement'
+                   ROW_NUMBER() OVER (
+                       PARTITION BY contract_number
+                       ORDER BY doc_type_priority ASC, doc_date DESC NULLS LAST
+                   ) AS rn
+            FROM candidate_originals
         )
         SELECT
             lv.contract_number,
