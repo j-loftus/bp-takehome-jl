@@ -99,10 +99,12 @@ python -m eval.run_eval --judge-extra-unlabeled 3
 python -m eval.judge --sample 8
 ```
 
-Writes `outputs/eval_report.md` (the shareable scorecard + "proven vs. assumed" section),
-`outputs/eval_results.json`, `outputs/eval_judge_raw.json`, and `outputs/eval_token_summary.txt`.
-`eval/monitoring.py` exposes `monitoring_snapshot()` + `compare_to_baseline()`, reusing the same
-scoring/judge code on a live batch — see docs/evaluation.md §8.
+**The written-up results — scorecard, metrics, and the "proven vs. assumed" section — are committed
+at [`docs/evaluation_results.md`](docs/evaluation_results.md)** (no eval run required to read them).
+Running the command above regenerates the raw artifacts under `outputs/` (`eval_report.md`,
+`eval_results.json`, `eval_judge_raw.json`, `eval_token_summary.txt`); those are gitignored and not
+shipped. `eval/monitoring.py` exposes `monitoring_snapshot()` + `compare_to_baseline()`, reusing the
+same scoring/judge code on a live batch — see docs/evaluation.md §8.
 
 ## Key Decisions
 
